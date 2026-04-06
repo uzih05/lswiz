@@ -145,7 +145,8 @@ def generate_html_report(results, config, logger):
     filepath = os.path.join(output_dir, filename)
 
     try:
-        with open(filepath, 'w') as f:
+        import io
+        with io.open(filepath, 'w', encoding='utf-8') as f:
             f.write(html)
         logger.info('HTML report saved: %s', filepath)
         sys.stdout.write('Report saved: {}\n'.format(filepath))
