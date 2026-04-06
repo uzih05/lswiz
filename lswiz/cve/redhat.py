@@ -103,14 +103,11 @@ def _filter_by_version(cves, package_name, package_version):
         cve_id = cve.get('CVE', '')
         severity = cve.get('severity', 'unknown')
         public_date = cve.get('public_date', '')
-        cvss3_score = cve.get('cvss3_scoring_vector', '')
+        cvss3_vector = cve.get('cvss3_scoring_vector', '')
         cvss3_base = 0.0
-
-        # extract CVSS3 base score
-        bugzilla = cve.get('bugzilla', '')
         resource_url = cve.get('resource_url', '')
 
-        # try to get numeric score from cvss3_score field
+        # extract CVSS3 base score
         score_str = cve.get('cvss3_score', '')
         if score_str:
             try:
@@ -123,7 +120,7 @@ def _filter_by_version(cves, package_name, package_version):
             'severity': severity,
             'public_date': public_date,
             'cvss3_score': cvss3_base,
-            'cvss3_vector': cvss3_score,
+            'cvss3_vector': cvss3_vector,
             'description': cve.get('bugzilla_description', ''),
             'resource_url': resource_url or 'https://access.redhat.com/security/cve/{}'.format(cve_id),
             'source': 'redhat',
