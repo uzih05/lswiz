@@ -38,10 +38,12 @@ def classify_status(packages, logger):
         # check INACTIVE (referenced somewhere)
         if _is_inactive(name, systemd_units, cron_refs, etc_refs):
             pkg['status'] = 'INACTIVE'
+            pkg['ports'] = []
             continue
 
         # UNUSED
         pkg['status'] = 'UNUSED'
+        pkg['ports'] = []
 
 
 def _get_running_processes(logger):
