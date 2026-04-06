@@ -18,7 +18,7 @@ scan:
 cve:
   # Red Hat Security API (primary for RPM packages)
   redhat:
-    base_url: "https://access.redhat.com/labs/securitydataapi"
+    base_url: "https://access.redhat.com/hydra/rest/securitydata"
     timeout: 30
   # NVD API 2.0 (for manual binaries via CPE matching)
   nvd:

@@ -23,7 +23,7 @@ DEFAULT_CONFIG = {
     },
     'cve': {
         'redhat': {
-            'base_url': 'https://access.redhat.com/labs/securitydataapi',
+            'base_url': 'https://access.redhat.com/hydra/rest/securitydata',
             'timeout': 30,
         },
         'nvd': {

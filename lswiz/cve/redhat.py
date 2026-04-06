@@ -43,7 +43,7 @@ def match_rpm_cves(packages, config, logger):
         # attach CVEs to all packages with this name
         for pkg in pkgs:
             version = pkg['version']
-            matched = _filter_by_version(cves, name, version)
+            matched = _filter_by_version(cves, name, version, eol_date)
             pkg['cves'] = matched
 
         # rate limiting: be gentle with the API
@@ -68,7 +68,6 @@ def _query_package_cves(package_name, base_url, timeout, eol_date, logger):
     url = '{base}/cve.json'.format(base=base_url)
     params = {
         'package': package_name,
-        'after': eol_date,
     }
 
     try:
@@ -87,13 +86,14 @@ def _query_package_cves(package_name, base_url, timeout, eol_date, logger):
     return []
 
 
-def _filter_by_version(cves, package_name, package_version):
+def _filter_by_version(cves, package_name, package_version, eol_date=''):
     """Filter CVEs relevant to the specific package version.
 
     Args:
         cves: list of CVE dicts from Red Hat API
         package_name: package name
         package_version: installed version
+        eol_date: only include CVEs published after this date (YYYY-MM-DD)
 
     Returns:
         list of filtered CVE dicts with normalized fields
@@ -103,6 +103,10 @@ def _filter_by_version(cves, package_name, package_version):
         cve_id = cve.get('CVE', '')
         severity = cve.get('severity', 'unknown')
         public_date = cve.get('public_date', '')
+        # filter by EOL date
+        if eol_date and public_date and public_date < eol_date:
+            continue
+
         cvss3_vector = cve.get('cvss3_scoring_vector', '')
         cvss3_base = 0.0
         resource_url = cve.get('resource_url', '')
