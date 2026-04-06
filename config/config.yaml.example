@@ -1,0 +1,52 @@
+# lswiz configuration
+
+# scan targets
+scan:
+  # RPM scan enabled
+  rpm: true
+  # manual binary scan enabled
+  manual: true
+  # paths to scan for manual binaries
+  manual_paths:
+    - /usr/local/bin
+    - /usr/local/sbin
+    - /opt
+    - /usr/bin
+    - /usr/sbin
+
+# CVE API settings
+cve:
+  # Red Hat Security API (primary for RPM packages)
+  redhat:
+    base_url: "https://access.redhat.com/labs/securitydataapi"
+    timeout: 30
+  # NVD API 2.0 (for manual binaries via CPE matching)
+  nvd:
+    base_url: "https://services.nvd.nist.gov/rest/json/cves/2.0"
+    api_key: ""  # optional, increases rate limit
+    timeout: 30
+
+# EOL date for filtering
+eol_date: "2024-06-30"
+
+# risk scoring weights
+scoring:
+  status_weight:
+    running_exposed: 1.5
+    running_local: 1.2
+    inactive: 0.8
+    unused: 0.3
+  network_weight:
+    external: 1.5
+    localhost: 0.8
+    no_port: 0.6
+
+# report settings
+report:
+  format: text  # text, json, html
+  output_dir: /tmp/lswiz-reports
+
+# logging
+log:
+  level: INFO
+  file: /var/log/lswiz/lswiz.log
