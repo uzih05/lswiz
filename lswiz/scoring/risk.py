@@ -32,7 +32,7 @@ def calculate_risk_scores(packages, config, logger):
 
     max_score = 0.0
     total_cves = 0
-    severity_counts = {'critical': 0, 'high': 0, 'medium': 0, 'low': 0}
+    severity_counts = {'critical': 0, 'high': 0, 'medium': 0, 'low': 0, 'none': 0}
 
     for pkg in packages:
         cves = pkg.get('cves', [])
