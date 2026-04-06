@@ -59,20 +59,81 @@ contextual_score = CVSS × 상태가중치 × 네트워크가중치
 
 ## 설치
 
+### CentOS 7 (대상 OS)
+
 ```bash
-# CentOS 7에서
-sudo yum install python3
-pip3 install lswiz
+# 1. Python 3 설치
+sudo yum install -y python3 python3-pip
+
+# 2. EOL로 인해 yum이 안 될 경우, vault 저장소로 전환 후 재시도
+sudo sed -i 's/mirrorlist=/#mirrorlist=/g' /etc/yum.repos.d/CentOS-*.repo
+sudo sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*.repo
+sudo yum install -y python3 python3-pip
+
+# 3. lswiz 설치 (GitHub에서 직접)
+pip3 install git+https://github.com/uzih05/lswiz.git
+
+# 또는 소스에서 직접 설치
+git clone https://github.com/uzih05/lswiz.git
+cd lswiz
+pip3 install -e .
+```
+
+### 설정 (선택)
+
+```bash
+# 기본 설정으로도 동작하지만, 커스텀 설정이 필요하면:
+sudo mkdir -p /etc/lswiz
+sudo cp config/config.yaml.example /etc/lswiz/config.yaml
+# NVD API 키가 있으면 config.yaml에 추가 (속도 향상)
 ```
 
 ## 사용법
 
 ```bash
-lswiz scan          # 패키지 수집 + CVE 매칭
-lswiz score         # 리스크 스코어링
-lswiz doctor        # 완화 전략 추천
-lswiz report        # 결과 리포트 (--format json|text|html)
-lswiz full          # 전체 파이프라인 실행
+# root 권한으로 실행 권장 (시스템 전체 스캔)
+sudo lswiz scan          # 패키지 수집 + CVE 매칭
+sudo lswiz score         # scan + 리스크 스코어링
+sudo lswiz doctor        # scan + score + 완화 전략 추천
+sudo lswiz report        # 전체 파이프라인 + 리포트 출력
+sudo lswiz full          # 전체 파이프라인 실행
+
+# 리포트 형식 지정
+sudo lswiz report --format json     # JSON 출력
+sudo lswiz report --format html     # HTML 파일 생성
+sudo lswiz report --format text     # 터미널 출력 (기본값)
+
+# 커스텀 설정 파일 지정
+sudo lswiz full -c /path/to/config.yaml
+```
+
+### 출력 예시
+
+```
+============================================================
+  lswiz - Security Scan Report
+============================================================
+
+  Server Risk Grade: HIGH
+  Max Risk Score:    8.2 / 10.0
+  Total CVEs:        12
+  Breakdown:         3 critical | 5 high | 4 medium
+
+--- Vulnerable Packages ---
+
+  nginx 1.12.2 [rpm] [RUNNING] score=8.2
+    CVE-2024-XXXX CVSS=7.5 CTX=8.2 ...
+
+--- Recommendations ---
+
+  nginx:
+    [HIGH] Restrict external access to port 80/tcp (nginx)
+      firewall-cmd --permanent --remove-port=80/tcp
+      firewall-cmd --reload
+
+--- Migration Urgency ---
+  Level: URGENT
+  Multiple high-severity vulnerabilities. Plan migration within 30 days.
 ```
 
 ## 프로젝트 구조
