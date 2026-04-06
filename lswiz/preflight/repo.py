@@ -41,8 +41,9 @@ def check_and_fix_repos(config, logger):
 
     if fixed > 0:
         logger.info('Fixed %d repo files. Cleaning YUM cache...', fixed)
-        subprocess.call(['yum', 'clean', 'all'],
-                        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        proc = subprocess.Popen(['yum', 'clean', 'all'],
+                                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        proc.communicate()
 
     # verify fix worked
     if _test_yum(logger):

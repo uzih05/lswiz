@@ -79,7 +79,7 @@ def _query_cpe_cves(cpe_name, base_url, api_key, timeout, eol_date, logger):
 
     headers = {}
     if api_key:
-        headers['apiKey'] = api_key
+        headers['apiKey'] = api_key  # NVD API 2.0 uses 'apiKey' header
 
     try:
         resp = requests.get(base_url, params=params, headers=headers, timeout=timeout)
