@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Text report generator for terminal output."""
 from __future__ import absolute_import
+import io
 import sys
 
 
@@ -17,10 +18,21 @@ COLORS = {
 }
 
 
+def _safe_str(text):
+    """Convert text to ASCII-safe string, replacing non-ASCII chars."""
+    if isinstance(text, bytes):
+        text = text.decode('utf-8', errors='replace')
+    return text.encode('ascii', errors='replace').decode('ascii')
+
+
 def generate_text_report(results, config, logger):
     """Print formatted text report to stdout."""
-    out = sys.stdout
-    use_color = hasattr(out, 'isatty') and out.isatty()
+    # wrap stdout to handle encoding issues on CentOS 7
+    try:
+        out = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
+    except AttributeError:
+        out = sys.stdout
+    use_color = hasattr(sys.stdout, 'isatty') and sys.stdout.isatty()
 
     _print_header(out, results, use_color)
     _print_vulnerable_packages(out, results, use_color)
