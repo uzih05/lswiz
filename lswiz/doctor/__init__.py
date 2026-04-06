@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Doctor module — mitigation strategy recommendation engine."""
 from __future__ import absolute_import
+import pipes
 
 from lswiz.doctor.firewall import recommend_firewall_rules
 from lswiz.doctor.service import recommend_service_actions
@@ -40,7 +41,7 @@ def recommend_mitigations(scored_results, config, logger):
                 'type': 'remove',
                 'priority': 'high',
                 'description': 'Remove unused binary with known vulnerabilities',
-                'command': 'rm {}'.format(pkg.get('path', pkg['name'])),
+                'command': 'rm {}'.format(pipes.quote(pkg.get('path', pkg['name']))),
             })
 
         # RUNNING → firewall and/or service actions
